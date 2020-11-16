@@ -49,7 +49,7 @@ func main() {
 	gen.GeneratePlugin(wrapper_plugin.NewPlugin(useGogoImport))
 
 	for i := 0; i < len(gen.Response.File); i++ {
-		gen.Response.File[i].Name = proto.String(strings.Replace(*gen.Response.File[i].Name, ".pb.go", ".validator.pb.go", -1))
+		gen.Response.File[i].Name = proto.String(strings.Replace(*gen.Response.File[i].Name, ".pb.go", ".wrapper.pb.go", -1))
 	}
 
 	// Send back the results.

@@ -1,7 +1,7 @@
 package interfacetype
 
 import (
-	"strings"
+	"fmt"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
@@ -29,16 +29,17 @@ func (p *plugin) Init(g *generator.Generator) {
 	p.Generator = g
 }
 
-func GetWrapper(message *descriptor.DescriptorProto) bool {
-	if message == nil {
+func GetWrapper(msg *descriptor.DescriptorProto) bool {
+	if msg == nil {
 		return false
 	}
-	if message.Options != nil {
-		v, err := proto.GetExtension(message.Options, wrapper.E_MsgWrapper)
-		if err == nil && v.(*bool) != nil {
-			return *(v.(*bool))
-		}
+
+	panic(fmt.Sprintf("%s", msg.Options))
+	if msg.Options != nil {
+		v := proto.GetBoolExtension(msg.Options, wrapper.E_MsgWrapper, false)
+		return v
 	}
+
 	return false
 }
 
@@ -46,12 +47,13 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 	if !p.gogoImport {
 		vanity.TurnOffGogoImport(file.FileDescriptorProto)
 	}
+
 	p.PluginImports = generator.NewPluginImports(p.Generator)
 
 	for _, message := range file.Messages() {
 		iface := GetWrapper(message.DescriptorProto)
 		if !iface {
-			return
+			panic("not")
 		}
 		if len(message.OneofDecl) != 1 {
 			panic("wrapper only supports messages with exactly one oneof declaration")
@@ -106,16 +108,6 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 		p.P(`}`)
 		p.P(``)
 	}
-}
-
-func splitCPackageType(ctype string) (packageName string, typ string) {
-	ss := strings.Split(ctype, ".")
-	if len(ss) == 1 {
-		return "", ctype
-	}
-	packageName = strings.Join(ss[0:len(ss)-1], ".")
-	typeName := ss[len(ss)-1]
-	return packageName, typeName
 }
 
 // func init() {

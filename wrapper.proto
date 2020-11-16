@@ -1,10 +1,10 @@
 syntax = "proto3";
-package wrapper_proto;
-
-import "google/protobuf/descriptor.proto";
+package wrapper;
 
 option go_package = "github.com/marbar3778/go-proto-wrapper";
 
+import "google/protobuf/descriptor.proto";
+
 extend google.protobuf.MessageOptions {
-    string msg_wrapper = 93001;
+    bool msg_wrapper = 65265;
 }

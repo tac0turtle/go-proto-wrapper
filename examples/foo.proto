@@ -1,0 +1,23 @@
+syntax = "proto3";
+package wrapper.examples;
+
+import "wrapper.proto";
+
+message FooMsg {
+  option (wrapper.msg_wrapper) = true;
+  oneof sum {
+    foo foo = 1;
+    bar bar = 2;
+    baz baz = 3;
+  }
+}
+
+message foo {
+  uint64 a = 1;
+}
+message bar {
+  uint64 a = 1;
+}
+message baz {
+  uint64 a = 1;
+}
