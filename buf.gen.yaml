@@ -5,3 +5,4 @@ plugins:
     opt: paths=source_relative
   - name: gowrapper
     out: .
+    opt: gogoimport=true

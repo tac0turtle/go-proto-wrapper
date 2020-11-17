@@ -1,12 +1,11 @@
 package interfacetype
 
 import (
-	"fmt"
-
 	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
 	"github.com/gogo/protobuf/vanity"
+
 	wrapper "github.com/marbar3778/go-proto-wrapper"
 )
 
@@ -33,13 +32,10 @@ func GetWrapper(msg *descriptor.DescriptorProto) bool {
 	if msg == nil {
 		return false
 	}
-
-	panic(fmt.Sprintf("%s", msg.Options))
+	// panic(msg.GetExtension())
 	if msg.Options != nil {
-		v := proto.GetBoolExtension(msg.Options, wrapper.E_MsgWrapper, false)
-		return v
+		return proto.GetBoolExtension(msg, wrapper.E_MsgWrapper, true)
 	}
-
 	return false
 }
 
@@ -51,9 +47,8 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 	p.PluginImports = generator.NewPluginImports(p.Generator)
 
 	for _, message := range file.Messages() {
-		iface := GetWrapper(message.DescriptorProto)
-		if !iface {
-			panic("not")
+		if !GetWrapper(message.DescriptorProto) {
+			continue
 		}
 		if len(message.OneofDecl) != 1 {
 			panic("wrapper only supports messages with exactly one oneof declaration")
@@ -65,7 +60,7 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 		}
 
 		ccTypeName := generator.CamelCaseSlice(message.TypeName())
-		p.P(`func (this *`, ccTypeName, `) Unwrap() proto.message {`)
+		p.P(`func (this *`, ccTypeName, `) Unwrap() proto.Message {`)
 		p.In()
 		for _, field := range message.Field {
 			fieldname := p.GetOneOfFieldName(message, field)
@@ -82,7 +77,7 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 		p.Out()
 		p.P(`}`)
 		p.P(``)
-		p.P(`func (this *`, ccTypeName, `) Wrap(value proto.message) error {`)
+		p.P(`func (this *`, ccTypeName, `) Wrap(value proto.Message) error {`)
 		p.In()
 		p.P(`if value == nil {`)
 		p.In()

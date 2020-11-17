@@ -6,5 +6,5 @@ option go_package = "github.com/marbar3778/go-proto-wrapper";
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MessageOptions {
-    bool msg_wrapper = 65265;
+    bool msg_wrapper = 6526500;
 }

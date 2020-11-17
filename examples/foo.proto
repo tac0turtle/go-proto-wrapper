@@ -12,6 +12,14 @@ message FooMsg {
   }
 }
 
+message BarMsg {
+  oneof sum {
+    foo foo = 1;
+    bar bar = 2;
+    baz baz = 3;
+  }
+}
+
 message foo {
   uint64 a = 1;
 }
