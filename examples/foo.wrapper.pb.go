@@ -15,34 +15,33 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *FooMsg) Unwrap() proto.Message {
-	if x := this.GetFoo(); x != nil {
-		return x
+func (this *FooMsg) Unwrap() (proto.Message, error) {
+	switch msg := this.Sum.(type) {
+	case *FooMsg_Foo:
+		return this.GetFoo(), nil
+	case *FooMsg_Bar:
+		return this.GetBar(), nil
+	case *FooMsg_Baz:
+		return this.GetBaz(), nil
+	default:
+		return nil, fmt.Errorf("unknown message: %T", msg)
 	}
-	if x := this.GetBar(); x != nil {
-		return x
-	}
-	if x := this.GetBaz(); x != nil {
-		return x
-	}
-	return nil
 }
 
-func (this *FooMsg) Wrap(value proto.Message) error {
-	if value == nil {
+func (this *FooMsg) Wrap(msg proto.Message) error {
+	if msg == nil {
 		this.Sum = nil
 		return nil
 	}
-	switch vt := value.(type) {
+	switch vt := msg.(type) {
 	case *Foo:
 		this.Sum = &FooMsg_Foo{vt}
-		return nil
 	case *Bar:
 		this.Sum = &FooMsg_Bar{vt}
-		return nil
 	case *Baz:
 		this.Sum = &FooMsg_Baz{vt}
-		return nil
+	default:
+		return fmt.Errorf("unknown message: %T", msg)
 	}
-	return fmt.Errorf("can't encode value of type %T as message FooMsg", value)
+	return nil
 }
