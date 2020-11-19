@@ -1,0 +1,20 @@
+syntax = "proto3";
+package wrapper.examples;
+
+message Items {
+  oneof sum {
+    item item = 1;
+    object object = 2;
+    value value = 3;
+  }
+}
+
+message item {
+  uint64 a = 1;
+}
+message object {
+  uint64 a = 1;
+}
+message value {
+  uint64 a = 1;
+}

@@ -41,6 +41,23 @@ func main() {
 		}
 	}
 
+	var targets []string
+	for _, target := range gen.Request.FileToGenerate {
+		// var re = regexp.MustCompile(`\b(\w*msg_wrapper\w*)\b`)
+		b, err := ioutil.ReadFile(target)
+		if err != nil {
+			panic(err)
+		}
+		s := string(b)
+
+		//check whether s contains substring text
+		if strings.Contains(s, "msg_wrapper") {
+			targets = append(targets, target)
+		}
+	}
+
+	gen.Request.FileToGenerate = targets
+
 	gen.CommandLineParameters(gen.Request.GetParameter())
 
 	gen.WrapTypes()
